@@ -52,3 +52,19 @@ target_link_libraries(testing PUBLIC gtest gtest_main)
 target_link_libraries(testing PUBLIC calc_bonds_lib)
 target_include_directories(testing PUBLIC  ${CMAKE_SOURCE_DIR})
 
+
+add_library(qcprot SHARED)
+target_sources(qcprot PUBLIC
+        "external/qcprot/qcprot.c"
+)
+target_include_directories(qcprot PUBLIC
+        "external/qcprot/"
+        "${CMAKE_SOURCE_DIR}"
+)
+
+add_executable(qcprot_demo)
+target_sources(qcprot_demo PUBLIC
+        "external/qcprot/main.c"
+)
+target_include_directories(qcprot_demo PUBLIC ${CMAKE_SOURCE_DIR})
+target_link_libraries(qcprot_demo PUBLIC qcprot m)
