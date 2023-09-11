@@ -81,6 +81,10 @@
 #include <stdio.h>
 #include <math.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Calculate the RMSD & rotational matrix.
 
         Input:
@@ -152,5 +156,9 @@ int FastCalcRMSDAndRotation(double *rot, double *A, double *rmsd, double E0, dou
             You can use CenterCoords() for this.
 */
 //void CenterCoords(double **coords, const int len);
+
+#ifdef  __cplusplus
+}
+#endif
 
 #endif
