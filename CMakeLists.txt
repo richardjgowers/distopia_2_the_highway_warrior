@@ -54,7 +54,7 @@ target_include_directories(testing PUBLIC  ${CMAKE_SOURCE_DIR})
 
 
 add_library(qcprot SHARED)
-target_sources(qcprot PUBLIC
+target_sources(qcprot PRIVATE
         "external/qcprot/qcprot.c"
 )
 target_include_directories(qcprot PUBLIC
@@ -68,3 +68,21 @@ target_sources(qcprot_demo PUBLIC
 )
 target_include_directories(qcprot_demo PUBLIC ${CMAKE_SOURCE_DIR})
 target_link_libraries(qcprot_demo PUBLIC qcprot m)
+
+add_executable(run_bench_qcprot)
+target_sources(run_bench_qcprot PUBLIC "bench_qcprot.cpp")
+target_link_libraries(run_bench_qcprot PUBLIC benchmark::benchmark)
+target_link_libraries(run_bench_qcprot PUBLIC qcprot)
+target_include_directories(run_bench_qcprot
+        PUBLIC ${CMAKE_SOURCE_DIR} "external/qcprot/"
+
+)
+
+add_library(qcprot512)
+target_sources(qcprot512 PRIVATE "src/qcprot512.cpp")
+target_link_libraries(qcprot512 PRIVATE hwy)
+target_include_directories(qcprot512 PUBLIC
+        "highway"
+        ${CMAKE_SOURCE_DIR}
+        "${CMAKE_SOURCE_DIR}/include"
+)
