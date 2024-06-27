@@ -99,6 +99,25 @@ def get_n_double_lanes():
     """The number of doubles per register distopia will handle on this system"""
     return GetNDoubleLanes()
 
+# check a variable number of arrays for matching shape and dtype
+def check_arrays(*arrays, results=None):
+    """Check that all arrays are the same length and dtype"""
+    shapes = [a.shape for a in arrays]
+    shape_set = set(shapes)
+    if len(shape_set) != 1:
+        raise ValueError("All arrays must have the same shape")
+    shape = shapes[0]
+
+    if results is not None:
+        if results.shape[0] != shape[0]:
+            raise ValueError(f"Results array must have the first dimensions shape as the input arrays, you passed results as {results.shape} and array {shape}")
+
+
+def check_box(box: np.ndarray):
+    """Check that the box is a 3x3 array"""
+    if box.shape != (3, 3):
+        pass
+        #raise ValueError("Box must be a 3x3 array")
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -129,6 +148,7 @@ def calc_bonds_no_box(floating[:, ::1] coords0,
         else:
             results = cnp.PyArray_EMPTY(1, dims, cnp.NPY_FLOAT64, 0)
 
+    check_arrays(coords0, coords1, results=results)
     results_view = results
 
     CalcBondsNoBox(& coords0[0][0], & coords1[0][0], nvals, & results_view[0])
@@ -168,6 +188,8 @@ def  calc_bonds_ortho(floating[:, ::1] coords0,
         else:
             results = cnp.PyArray_EMPTY(1, dims, cnp.NPY_FLOAT64, 0)
 
+    check_arrays(coords0, coords1, results=results)
+    check_box(box)
     results_view = results
 
     CalcBondsOrtho(& coords0[0][0], & coords1[0][0], nvals, & box[0], & results_view[0])
@@ -207,6 +229,8 @@ def  calc_bonds_triclinic(floating[:, ::1] coords0,
         else:
             results = cnp.PyArray_EMPTY(1, dims, cnp.NPY_FLOAT64, 0)
 
+    check_arrays(coords0, coords1, results=results)
+    check_box(box)
     results_view = results
 
     CalcBondsTriclinic(& coords0[0][0], & coords1[0][0], nvals, & box[0], & results_view[0])
@@ -231,6 +255,7 @@ def calc_angles_no_box(
         else:
             results = cnp.PyArray_EMPTY(1, dims, cnp.NPY_FLOAT64, 0)
 
+    check_arrays(coords0, coords1, coords2, results)
     results_view = results
 
     CalcAnglesNoBox(&coords0[0][0], &coords1[0][0], &coords2[0][0],
@@ -257,6 +282,8 @@ def calc_angles_ortho(
         else:
             results = cnp.PyArray_EMPTY(1, dims, cnp.NPY_FLOAT64, 0)
 
+    check_arrays(coords0, coords1, coords2, results=results)
+    check_box(box)
     results_view = results
 
     CalcAnglesOrtho(&coords0[0][0], &coords1[0][0], &coords2[0][0],
@@ -283,6 +310,8 @@ def calc_angles_triclinic(
         else:
             results = cnp.PyArray_EMPTY(1, dims, cnp.NPY_FLOAT64, 0)
 
+    check_arrays(coords0, coords1, coords2, results=results)
+    check_box(box)
     results_view = results
 
     CalcAnglesTriclinic(&coords0[0][0], &coords1[0][0], &coords2[0][0],
@@ -309,6 +338,7 @@ def calc_dihedrals_no_box(
         else:
             results = cnp.PyArray_EMPTY(1, dims, cnp.NPY_FLOAT64, 0)
 
+    check_arrays(coords0, coords1, coords2, coords3, results=results)
     results_view = results
 
     CalcDihedralsNoBox(&coords0[0][0], &coords1[0][0], &coords2[0][0], &coords3[0][0],
@@ -336,6 +366,8 @@ def calc_dihedrals_ortho(
         else:
             results = cnp.PyArray_EMPTY(1, dims, cnp.NPY_FLOAT64, 0)
 
+    check_arrays(coords0, coords1, coords2, coords3, results=results)
+    check_box(box)
     results_view = results
 
     CalcDihedralsOrtho(&coords0[0][0], &coords1[0][0], &coords2[0][0], &coords3[0][0],
@@ -363,6 +395,9 @@ def calc_dihedrals_triclinic(
         else:
             results = cnp.PyArray_EMPTY(1, dims, cnp.NPY_FLOAT64, 0)
 
+
+    check_arrays(coords0, coords1, coords2, coords3, results=results)
+    check_box(box)
     results_view = results
 
     CalcDihedralsTriclinic(&coords0[0][0], &coords1[0][0], &coords2[0][0], &coords3[0][0],
