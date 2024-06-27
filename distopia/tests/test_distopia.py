@@ -78,9 +78,28 @@ class TestDistances:
         if use_result_buffer:
             with pytest.raises(ValueError):
                 func(c0, c1, box, results=result_buffer[:-1])
+        # bad box
+        with pytest.raises(ValueError):
+            func(c0, c1, box[:-1], results=result_buffer)
         
 
-    
+
+    @pytest.mark.parametrize("dtype", (np.float32, np.float64))
+    @pytest.mark.parametrize("use_result_buffer", (True, False))
+    def test_bad_input_array_bonds_nobox(self, use_result_buffer, dtype):
+        c0 = self.arange_input(10, dtype)
+        c1 = self.arange_input(10, dtype)
+        result_buffer = self.result_shim(use_result_buffer, 10, dtype)
+        box = np.asarray([10, 10, 10], dtype=dtype)
+        with pytest.raises(ValueError):
+            distopia.calc_bonds_no_box(c0, c1[:-1], results=result_buffer)
+        with pytest.raises(ValueError):
+            distopia.calc_bonds_no_box(c0[:-1], c1, results=result_buffer)
+        if use_result_buffer:
+            with pytest.raises(ValueError):
+                distopia.calc_bonds_no_box(c0, c1,results=result_buffer[:-1])
+        
+
 
 
 class TestMDA:
