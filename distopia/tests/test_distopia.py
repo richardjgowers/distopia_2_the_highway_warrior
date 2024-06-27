@@ -21,7 +21,7 @@ class TestDistances:
             return np.empty(N, dtype=dtype)
 
     @pytest.mark.parametrize("dtype", (np.float32, np.float64))
-    @pytest.mark.parametrize("box", ([10, 10, 10], [100, 20, 10]))
+    @pytest.mark.parametrize("box", (np.eye(3)*1, np.eye(3)*10))
     @pytest.mark.parametrize("N", (0, 10, 1000, 10000))
     @pytest.mark.parametrize("use_result_buffer", (True, False))
     def test_calc_bonds_ortho_all_zero(self, N, box, use_result_buffer, dtype):
@@ -56,7 +56,7 @@ class TestDistances:
         c0 = self.arange_input(N, dtype)
         c1 = self.arange_input(N, dtype)
         result_buffer = self.result_shim(use_result_buffer, N, dtype)
-        box = np.asarray([30, -2.6146722, 29.885841, -10.260604, 9.402112, 26.576687], dtype=dtype)
+        box = np.asarray([[30, 0, 0], [-2.6146722, 29.885841, 0], [-10.260604, 9.402112, 26.576687]], dtype=dtype)
         result = distopia.calc_bonds_triclinic(c0, c1, box, results=result_buffer)
         assert_allclose(result, np.zeros(N))
         # check dtype of result
@@ -70,7 +70,7 @@ class TestDistances:
         c0 = self.arange_input(10, dtype)
         c1 = self.arange_input(10, dtype)
         result_buffer = self.result_shim(use_result_buffer, 10, dtype)
-        box = np.asarray([10, 10, 10], dtype=dtype)
+        box = np.asarray(np.eye(3)*10, dtype=dtype)
         with pytest.raises(ValueError):
             func(c0, c1[:-1], box, results=result_buffer)
         with pytest.raises(ValueError):
@@ -90,7 +90,7 @@ class TestDistances:
         c0 = self.arange_input(10, dtype)
         c1 = self.arange_input(10, dtype)
         result_buffer = self.result_shim(use_result_buffer, 10, dtype)
-        box = np.asarray([10, 10, 10], dtype=dtype)
+        box = np.asarray(np.eye(3)*10, dtype=dtype)
         with pytest.raises(ValueError):
             distopia.calc_bonds_no_box(c0, c1[:-1], results=result_buffer)
         with pytest.raises(ValueError):
@@ -119,12 +119,12 @@ class TestMDA:
     @staticmethod
     @pytest.fixture()
     def box_bonds():
-        return np.array([10., 10., 10., 90., 90., 90.], dtype=np.float32)
+        return np.eye(3, dtype=np.float32) * 10
 
     @staticmethod
     @pytest.fixture()
     def triclinic_box():
-        return np.asarray([10, 1, 10, 1, 0, 10], dtype=np.float32)
+        return np.asarray([[10, 0, 0], [1, 10, 0], [1, 0, 10]], dtype=np.float32)
 
     @pytest.mark.parametrize("dtype", (np.float32, np.float64))
     def test_bonds(self, box_bonds, dtype, positions):

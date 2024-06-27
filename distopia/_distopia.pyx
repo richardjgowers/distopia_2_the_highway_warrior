@@ -116,8 +116,7 @@ def check_arrays(*arrays, results=None):
 def check_box(box: np.ndarray):
     """Check that the box is a 3x3 array"""
     if box.shape != (3, 3):
-        pass
-        #raise ValueError("Box must be a 3x3 array")
+        raise ValueError("Box must be a 3x3 array")
 
 @cython.boundscheck(False)
 @cython.wraparound(False)

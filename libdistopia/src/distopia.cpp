@@ -6,6 +6,7 @@
 #include <iostream>
 #include <cstring>
 #include <cmath>
+#include <numeric>
 
 #undef HWY_TARGET_INCLUDE
 #define HWY_TARGET_INCLUDE "src/distopia.cpp"
@@ -62,13 +63,13 @@ namespace distopia {
             hn::VFromD<D> lx, ly, lz, ix, iy, iz;
             explicit OrthogonalBox(D d, const T *sbox) {
                 // take norm of x box element
-                T[3] x_vec = {sbox[0], sbox[4], sbox[8]};
+                T x_vec[3] = {sbox[0], sbox[3], sbox[6]};
                 T x_len = std::sqrt(std::inner_product(x_vec, x_vec + 3, x_vec, 0.0));
                 // take norm of y box element
-                T[3] y_vec = {sbox[1], sbox[5], sbox[9]};
+                T y_vec[3] = {sbox[1], sbox[4], sbox[7]};
                 T y_len = std::sqrt(std::inner_product(y_vec, y_vec + 3, y_vec, 0.0));
                 // take norm of z box element
-                T[3] z_vec = {sbox[2], sbox[6], sbox[10]};
+                T z_vec[3] = {sbox[2], sbox[5], sbox[8]};
                 T z_len = std::sqrt(std::inner_product(z_vec, z_vec + 3, z_vec, 0.0));
                 
 
