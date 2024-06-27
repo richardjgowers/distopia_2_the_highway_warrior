@@ -61,12 +61,23 @@ namespace distopia {
         struct OrthogonalBox {
             hn::VFromD<D> lx, ly, lz, ix, iy, iz;
             explicit OrthogonalBox(D d, const T *sbox) {
-                this->lx = hn::Set(d, sbox[0]);
-                this->ly = hn::Set(d, sbox[1]);
-                this->lz = hn::Set(d, sbox[2]);
-                this->ix = hn::Set(d, 1 / sbox[0]);
-                this->iy = hn::Set(d, 1 / sbox[1]);
-                this->iz = hn::Set(d, 1 / sbox[2]);
+                // take norm of x box element
+                T[3] x_vec = {sbox[0], sbox[4], sbox[8]};
+                T x_len = std::sqrt(std::inner_product(x_vec, x_vec + 3, x_vec, 0.0));
+                // take norm of y box element
+                T[3] y_vec = {sbox[1], sbox[5], sbox[9]};
+                T y_len = std::sqrt(std::inner_product(y_vec, y_vec + 3, y_vec, 0.0));
+                // take norm of z box element
+                T[3] z_vec = {sbox[2], sbox[6], sbox[10]};
+                T z_len = std::sqrt(std::inner_product(z_vec, z_vec + 3, z_vec, 0.0));
+                
+
+                this->lx = hn::Set(d, x_len);
+                this->ly = hn::Set(d, y_len);
+                this->lz = hn::Set(d, z_len);
+                this->ix = hn::Set(d, 1 / x_len);
+                this->iy = hn::Set(d, 1 / y_len);
+                this->iz = hn::Set(d, 1 / z_len);
             }
 
             void MinimiseVectors(V &vx,
@@ -119,12 +130,12 @@ namespace distopia {
 
             explicit TriclinicBox(D d, const T *sbox) {
                 this->xx = hn::Set(d, sbox[0]);
-                this->xy = hn::Set(d, sbox[1]); this->yy = hn::Set(d, sbox[2]);
-                this->xz = hn::Set(d, sbox[3]); this->yz = hn::Set(d, sbox[4]); this->zz = hn::Set(d, sbox[5]);
+                this->xy = hn::Set(d, sbox[3]); this->yy = hn::Set(d, sbox[4]);
+                this->xz = hn::Set(d, sbox[6]); this->yz = hn::Set(d, sbox[7]); this->zz = hn::Set(d, sbox[8]);
                 // inverse of diagonal elements
                 this->inv_xx = hn::Set(d, 1/sbox[0]);
-                this->inv_yy = hn::Set(d, 1/sbox[2]);
-                this->inv_zz = hn::Set(d, 1/sbox[5]);
+                this->inv_yy = hn::Set(d, 1/sbox[4]);
+                this->inv_zz = hn::Set(d, 1/sbox[8]);
             }
 
             void ShiftIntoPrimaryUnitCell(V &vx, V &vy, V &vz) const {

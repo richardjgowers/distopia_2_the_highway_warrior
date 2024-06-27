@@ -240,7 +240,7 @@ TYPED_TEST(CoordinatesTest, CalcDihedralsTriclinicMatchesMDA)
     triclinic_box_reduced[5] = this->triclinic_box[8];
 
     distopia::CalcDihedralsTriclinic(this->coords0, this->coords1, this->coords2, this->coords3,
-                                     this->nresults, triclinic_box_reduced, this->results);
+                                     this->nresults, triclinic_box, this->results);
 
     _calc_dihedral_triclinic((ctype*)this->coords0, (ctype*)this->coords1, (ctype*)this->coords2,
                              (ctype*)this->coords3, this->nresults, this->triclinic_box, this->ref);
