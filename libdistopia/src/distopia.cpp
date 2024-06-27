@@ -76,9 +76,9 @@ namespace distopia {
                 this->lx = hn::Set(d, x_len);
                 this->ly = hn::Set(d, y_len);
                 this->lz = hn::Set(d, z_len);
-                this->ix = hn::Set(d, 1 / x_len);
-                this->iy = hn::Set(d, 1 / y_len);
-                this->iz = hn::Set(d, 1 / z_len);
+                this->ix = hn::Set(d, 1.0 / x_len);
+                this->iy = hn::Set(d, 1.0 / y_len);
+                this->iz = hn::Set(d, 1.0 / z_len);
             }
 
             void MinimiseVectors(V &vx,

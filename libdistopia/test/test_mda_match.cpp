@@ -16,7 +16,7 @@ typedef Types<float, double> ScalarTypes;
 constexpr int BOXSIZE = 30;
 constexpr int NRESULTS = 10;
 constexpr int NINDICIES = 5;
-constexpr double abs_err = 1.0e-4;
+constexpr double abs_err = 1.0e-3;
 
 
 

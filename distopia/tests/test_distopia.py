@@ -81,7 +81,7 @@ class TestDistances:
         # bad box
         with pytest.raises(ValueError):
             func(c0, c1, box[:-1], results=result_buffer)
-        
+            
 
 
     @pytest.mark.parametrize("dtype", (np.float32, np.float64))
@@ -99,6 +99,7 @@ class TestDistances:
             with pytest.raises(ValueError):
                 distopia.calc_bonds_no_box(c0, c1,results=result_buffer[:-1])
         
+
 
 
 
