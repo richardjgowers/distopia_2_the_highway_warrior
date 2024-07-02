@@ -573,7 +573,7 @@ namespace distopia {
 
             T a_sub[3 * HWY_MAX_LANES_D(hn::ScalableTag<T>)];
             T b_sub[3 * HWY_MAX_LANES_D(hn::ScalableTag<T>)];
-            T out_sub[HWY_MAX_LANES_D(hn::ScalableTag<T>)];
+            T *out_sub;
             const T *a_src, *b_src;
             T *dst;
 
@@ -588,6 +588,7 @@ namespace distopia {
                 b_src = &b[0];
             }
             if (HWY_UNLIKELY(na * nb < nlanes)) {
+                out_sub = new T[nlanes * nlanes];
                 dst = &out_sub[0];
             } else {
                 dst = out;
@@ -613,14 +614,15 @@ namespace distopia {
 
                     hn::LoadInterleaved3(d, b_src + 3 * p_b, b_x, b_y, b_z);
 
-                    //auto result = box.Distance(a_x, a_y, a_z, b_x, b_y, b_z);
+                    auto result = box.Distance(a_x, a_y, a_z, b_x, b_y, b_z);
 
-                    //hn::StoreU(result, d, dst + p_a + p_b);
+                    hn::StoreU(result, d, dst + p_a + p_b);
                 }
             }
 
             if (HWY_UNLIKELY(na * nb < nlanes)) {
                 memcpy(out, dst, na * nb * sizeof(T));
+                delete[] out_sub;
             }
 
         }
@@ -738,7 +740,7 @@ namespace distopia {
             CalcDistanceArray(a, b, na, nb, out, vbox);
         }
         void CalcDistanceArrayNoBoxSingle(const float *a, const float *b, int na, int nb, float *out) {
-            hn::ScalableTag<double> d;
+            hn::ScalableTag<float> d;
             const NoBox vbox(d);
             CalcDistanceArray(a, b, na, nb, out, vbox);
         }
@@ -748,7 +750,7 @@ namespace distopia {
             CalcDistanceArray(a, b, na, nb, out, vbox);
         }
         void CalcDistanceArrayOrthoSingle(const float *a, const float *b, int na, int nb, const float *box, float *out) {
-            hn::ScalableTag<double> d;
+            hn::ScalableTag<float> d;
             const OrthogonalBox vbox(d, box);
             CalcDistanceArray(a, b, na, nb, out, vbox);
         }
@@ -758,7 +760,7 @@ namespace distopia {
             CalcDistanceArray(a, b, na, nb, out, vbox);
         }
         void CalcDistanceArrayTriclinicSingle(const float *a, const float *b, int na, int nb, const float *box, float *out) {
-            hn::ScalableTag<double> d;
+            hn::ScalableTag<float> d;
             const TriclinicBox vbox(d, box);
             CalcDistanceArray(a, b, na, nb, out, vbox);
         }
@@ -869,6 +871,14 @@ namespace distopia {
         return HWY_DYNAMIC_DISPATCH(CalcDihedralsTriclinicDouble)(a, b, c, d, n, box, out);
     }
     HWY_DLLEXPORT template <> void CalcDistanceArrayNoBox(const double *a, const double *b, int na, int nb, double *out) {
+        // hn::ScalableTag<double> d;
+        if (nb < 4) {
+            abort();
+            // TODO: We probably need to go to a scalar width if nb is less than a vectors width
+            //return N_SCALAR::CalcDistanceArrayNoBoxDouble(a, b, na, nb, out);
+            //return N_SCALAR::CalcDistanceArrayNoBoxDouble(a, b, na, nb, out);
+            //return HWY_STATIC_DISPATCH(CalcDistanceArrayNoBoxDouble)(a, b, na, nb, out);
+        }
         return HWY_DYNAMIC_DISPATCH(CalcDistanceArrayNoBoxDouble)(a, b, na, nb, out);
     }
     HWY_DLLEXPORT template <> void CalcDistanceArrayNoBox(const float *a, const float* b, int na, int nb, float *out) {
